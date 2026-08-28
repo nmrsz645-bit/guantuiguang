@@ -12,16 +12,17 @@
 - 桌面程序：`tools\desktop_oceanengine_app.py`。
 - 已新增 `.gitignore`、`README.md`、`AGENTS.md`、`requirements.txt` 和 `config.example.json`。
 - `.gitignore` 排除了账号配置、授权 Token、Chrome profile、日志、运行状态和离线安装包。
+- 已初始化 Git 的 `main` 分支，并创建本地首个提交：`0da63ba 建立自动关推广源码交接仓库`。
+- 已验证核心 Python 脚本可通过 `py -3 -m py_compile`。
 
 ## 未完成
 
-- 初始化 Git、检查暂存清单并创建本地提交。
 - 用户提供自己的空 Git 仓库地址后，才配置远程仓库并推送。
 - 新电脑克隆后必须重新首次安装、登录和授权；不能从 Git 恢复私密数据。
 
 ## 下一步（直接执行）
 
-在 `E:\自动关推广对外版` 执行 `git init -b main`，然后暂存代码并核验所有被忽略的用户数据均未进入暂存区。
+用户提供仓库地址后，在 `E:\自动关推广对外版` 执行 `git remote add origin <仓库地址>`，再推送 `main` 分支；推送前再次核验 Git 没有暂存用户数据。
 
 ## 关键路径
 
