@@ -14,15 +14,16 @@
 - `.gitignore` 排除了账号配置、授权 Token、Chrome profile、日志、运行状态和离线安装包。
 - 已初始化 Git 的 `main` 分支，并创建本地首个提交：`0da63ba 建立自动关推广源码交接仓库`。
 - 已验证核心 Python 脚本可通过 `py -3 -m py_compile`。
+- 已连接并推送至远程仓库：`https://github.com/nmrsz645-bit/-.git`。
+- 已回读验证远程 `origin/main` 与本地提交一致。
 
 ## 未完成
 
-- 用户提供自己的空 Git 仓库地址后，才配置远程仓库并推送。
 - 新电脑克隆后必须重新首次安装、登录和授权；不能从 Git 恢复私密数据。
 
 ## 下一步（直接执行）
 
-用户提供仓库地址后，在 `E:\自动关推广对外版` 执行 `git remote add origin <仓库地址>`，再推送 `main` 分支；推送前再次核验 Git 没有暂存用户数据。
+在另一台电脑克隆 `https://github.com/nmrsz645-bit/-.git`，然后按照 `README.md` 执行首次安装、专用 Chrome 登录和账户授权；不得从 Git 获取或覆盖用户的私密配置。
 
 ## 关键路径
 
