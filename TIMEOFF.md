@@ -23,7 +23,7 @@
 
 ## 下一步（直接执行）
 
-在另一台电脑克隆 `https://github.com/nmrsz645-bit/-.git`，然后按照 `README.md` 执行首次安装、专用 Chrome 登录和账户授权；不得从 Git 获取或覆盖用户的私密配置。
+在另一台电脑克隆 `https://github.com/nmrsz645-bit/guantuiguang.git`，然后按照 `README.md` 执行首次安装、专用 Chrome 登录和账户授权；不得从 Git 获取或覆盖用户的私密配置。
 
 ## 关键路径
 
@@ -45,6 +45,6 @@ python -m py_compile 自动关推广\monitor_oceanengine_units.py tools\monitor_
 
 ## 已知问题
 
-- Git 远程仓库已配置为 `https://github.com/nmrsz645-bit/-.git`；后续推送前仍必须先检查 `git status`，确认没有私密数据或运行数据被纳入提交。
+- Git 远程仓库已迁移并配置为 `https://github.com/nmrsz645-bit/guantuiguang.git`；后续推送前仍必须先检查 `git status`，确认没有私密数据或运行数据被纳入提交。
 - `config.json` 中含 App Secret 和 Token 关联信息，只能保存在用户本机。
 - `chrome-profiles` 很大，且包含登录状态，绝不可纳入仓库。
