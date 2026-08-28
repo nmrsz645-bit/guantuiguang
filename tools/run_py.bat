@@ -1,0 +1,69 @@
+@echo off
+setlocal
+
+if "%~1"=="" (
+  echo ERROR: Missing python script path.
+  exit /b 1
+)
+
+set "SCRIPT=%~1"
+set "SCRIPT_ARGS="
+:collect_args
+shift
+if "%~1"=="" goto args_collected
+set SCRIPT_ARGS=%SCRIPT_ARGS% "%~1"
+goto collect_args
+:args_collected
+
+call :find_python
+if defined PYTHON_EXE goto run_script
+
+call :install_python
+call :find_python
+if defined PYTHON_EXE goto run_script
+
+echo ERROR: Python was not found and bundled installer did not finish correctly.
+echo Please run first-install BAT again, or install Python 3.12 manually with Add Python to PATH.
+exit /b 1
+
+:run_script
+"%PYTHON_EXE%" "%SCRIPT%" %SCRIPT_ARGS%
+exit /b %errorlevel%
+
+:find_python
+set "PYTHON_EXE="
+where py >nul 2>nul
+if not errorlevel 1 (
+  for /f "delims=" %%P in ('py -3 -c "import sys; print(sys.executable)" 2^>nul') do set "PYTHON_EXE=%%P"
+  if defined PYTHON_EXE exit /b 0
+)
+
+where python >nul 2>nul
+if not errorlevel 1 (
+  for /f "delims=" %%P in ('python -c "import sys; print(sys.executable)" 2^>nul') do set "PYTHON_EXE=%%P"
+  if defined PYTHON_EXE exit /b 0
+)
+
+for %%P in (
+  "%LocalAppData%\Programs\Python\Python312\python.exe"
+  "%LocalAppData%\Programs\Python\Python313\python.exe"
+  "%ProgramFiles%\Python312\python.exe"
+  "%ProgramFiles%\Python313\python.exe"
+) do (
+  if exist "%%~P" (
+    set "PYTHON_EXE=%%~P"
+    exit /b 0
+  )
+)
+exit /b 1
+
+:install_python
+set "ROOT=%~dp0.."
+set "INSTALLER=%ROOT%\installers\python-3.12.10-amd64.exe"
+if not exist "%INSTALLER%" (
+  echo ERROR: Bundled Python installer not found: %INSTALLER%
+  exit /b 1
+)
+echo Python not found. Installing bundled Python 3.12...
+"%INSTALLER%" /quiet InstallAllUsers=0 PrependPath=1 Include_launcher=1 Include_pip=1
+exit /b 0

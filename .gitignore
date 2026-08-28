@@ -1,0 +1,32 @@
+# Runtime data and credentials. Never commit these files or folders.
+自动关推广/data/
+自动关推广/tokens/
+自动关推广/chrome-profiles/
+自动关推广/chrome-debug-profile/
+自动关推广/login-pages/
+自动关推广/账号接口信息/
+自动关推广/config.json
+自动关推广/config.before-*.json
+自动关推广/oceanengine_tokens*.json
+
+# Runtime logs, state and temporary files.
+logs/
+rizhi/
+自动关推广/logs/
+自动关推广/rizhi/
+*.log
+*.jsonl
+*.lock
+*.pid
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local installers and generated release/build artifacts are distributed separately.
+installers/
+build/
+dist/
+app.previous/
+release-runtime-artifacts-*/
+release-test-logs-*/
+verify-*/

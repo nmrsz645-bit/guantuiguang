@@ -1,0 +1,29 @@
+{
+  "check_interval_seconds": 80,
+  "one_browser_per_advertiser": true,
+  "parallel_browser_count": 3,
+  "per_advertiser_port_base": 9400,
+  "page_size": 20,
+  "max_pages": 50,
+  "date_mode": "today",
+  "dry_run": false,
+  "close_only_after_preview_url": true,
+  "close_batch_size": 1,
+  "main_accounts": [
+    {
+      "id": "main_01",
+      "name": "主账户01",
+      "enabled": false,
+      "chrome_debug_port": 9400,
+      "chrome_profile_dir": "chrome-profiles/主账户01",
+      "token_file": "tokens/主账户01.json",
+      "advertiser_ids": [
+        "填写投放账户ID"
+      ],
+      "app_id": "填写App ID",
+      "app_secret": "填写App Secret",
+      "redirect_uri": "填写授权回调地址",
+      "allow_close": true
+    }
+  ]
+}
