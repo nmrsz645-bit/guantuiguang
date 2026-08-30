@@ -5,6 +5,8 @@ import socket
 import sys
 from pathlib import Path
 
+from config_validation import enabled_main_accounts, validate_monitor_config
+
 
 ROOT = Path(__file__).resolve().parents[1]
 AD_DIR = ROOT / "自动关推广"
@@ -113,14 +115,14 @@ for module_name in ["requests", "websocket", "dotenv"]:
 try:
     config = json.loads((AD_DIR / "config.json").read_text(encoding="utf-8-sig"))
     ok("Config JSON can be parsed")
-    accounts = [a for a in config.get("main_accounts", []) if a.get("enabled", True)]
-    if not accounts:
-        message = "No enabled main account configured. Open the desktop app and save at least one enabled account before monitoring."
-        if allow_unconfigured:
+    accounts = enabled_main_accounts(config)
+    validation_errors = validate_monitor_config(config)
+    for message in validation_errors:
+        if allow_unconfigured and message == "至少需要一个已启用的主账户。":
             warn(message)
         else:
             err(message)
-    else:
+    if accounts:
         ok(f"Enabled main accounts: {len(accounts)}")
         for account in accounts:
             ids = [str(x).strip() for x in account.get("advertiser_ids", []) if str(x).strip()]

@@ -42,6 +42,18 @@ py -3 -m unittest discover -s tests -v
 
 当前覆盖：账户文本解析、账户导入后的旧账户停用规则、并发浏览器分配、Token 失效判定、单元状态判定、关闭保护、接口响应解析，以及 72 小时日志清理规则。
 
+## 无黑框 EXE 发布
+
+开发人员在已安装 Python 和 PyInstaller 的电脑上双击 `build-desktop-release.bat`。它会生成 `release\自动关推广-v<版本号>\自动关推广.exe`：这是无需 Python、双击后不显示命令窗口的桌面版。
+
+构建前先安装 PyInstaller：
+
+```powershell
+py -3 -m pip install pyinstaller
+```
+
+发布给普通用户时，复制整个生成的发布文件夹；不要只复制 EXE。用户的 `data` 文件夹包含配置、Token、Chrome 登录资料和运行状态，升级时必须保留。
+
 ## Git 交接
 
 本地初始化后可执行：

@@ -7,6 +7,8 @@ from pathlib import Path
 import tkinter as tk
 from tkinter import messagebox
 
+from config_validation import validate_monitor_config
+
 
 def _load_json(path):
     try:
@@ -233,17 +235,21 @@ class AccountConfigDialog:
             item["chrome_debug_port"] = int(item.get("chrome_debug_port") or (9222 if index == 1 else 9300 + index))
             item["chrome_profile_dir"] = item.get("chrome_profile_dir") or f"chrome-profiles/{item['id']}"
             item["token_file"] = item.get("token_file") or f"tokens/{item['id']}.json"
+            for key in ("app_id", "app_secret", "redirect_uri"):
+                item[key] = item.get(key) or self.config.get(key) or ""
             result.append(item)
         return result
 
     def save(self, quiet=False):
         self.persist()
         accounts = self._clean()
-        enabled = [x for x in accounts if x.get("enabled") and x.get("advertiser_ids")]
-        if not enabled:
-            messagebox.showerror("无法保存", "至少需要一个启用账户，并填写投放账户 ID。", parent=self.window)
+        enabled = [x for x in accounts if x.get("enabled")]
+        candidate = dict(self.config, main_accounts=accounts)
+        errors = validate_monitor_config(candidate)
+        if errors:
+            messagebox.showerror("无法保存", "\n".join(errors), parent=self.window)
             return False
-        config = dict(self.config)
+        config = candidate
         config["main_accounts"] = accounts
         config["account_source"] = "desktop"
         config["one_browser_per_advertiser"] = True

@@ -14,11 +14,12 @@
 - 项目已具备源码交接文件：`.gitignore`、`README.md`、`AGENTS.md`、`requirements.txt`、`config.example.json`。
 - `.gitignore` 已排除用户私密配置、Token、Chrome profile、登录页面、日志、运行状态和离线安装包；最近一次提交未包含这些内容。
 - 核心监控逻辑位于 `自动关推广\monitor_oceanengine_units.py`；账户文本解析和并发浏览器分配位于 `自动关推广\main_accounts.py`；账户导入逻辑位于 `自动关推广\import_account_texts.py`。
-- 桌面程序入口位于 `tools\desktop_oceanengine_app.py`；监控守护进程位于 `tools\monitor_oceanengine_supervisor.py`。
+- 桌面程序入口位于 `tools\desktop_oceanengine_app.py`；监控守护进程位于 `tools\monitor_oceanengine_supervisor.py`。`tools\build_desktop_release.py` 可构建无命令窗口的 Windows EXE。
 - 已添加离线自动化测试目录 `tests\` 与测试入口 `run-tests.bat`。测试不会访问巨量引擎、不会启动 Chrome，也不会读取或改动真实账号、Token、浏览器资料或推广状态。
-- 已在本机执行 `py -3 -m unittest discover -s tests -v`：14 项测试全部通过，其中包含首次配置创建与已有配置保护测试。
+- 已在本机执行 `py -3 -m unittest discover -s tests -v`：17 项测试全部通过，其中包含首次配置创建与已有配置保护、完整接口配置校验及端口/账户 ID 冲突校验。
 - 已在本机执行 `py -3 -m py_compile 自动关推广\main_accounts.py 自动关推广\import_account_texts.py 自动关推广\monitor_oceanengine_units.py`：通过。
 - 已在隔离目录从远程 `origin/main` 真实克隆，建立干净虚拟环境并执行首次安装流程：依赖安装、初始配置创建、安装后自检、14 项测试和全量编译均通过。
+- 已构建 `release\自动关推广-v1.2.1\自动关推广.exe`，PE 子系统为 GUI（`2`），不显示命令窗口；生成的 `release\` 目录已被 Git 忽略，不能替代源码提交。
 
 ## 未完成事项
 
@@ -39,7 +40,7 @@ git ls-remote origin refs/heads/main
 py -3 -m unittest discover -s tests -v
 ```
 
-预期：`git status --short` 无输出；本地与远程提交号一致；14 项测试均为 `OK`。
+预期：`git status --short` 无输出；本地与远程提交号一致；17 项测试均为 `OK`。
 
 确认后，如是在新电脑，再按 `README.md` 的“新电脑首次使用”执行：首次安装会在配置不存在时自动生成本机 `config.json`，再通过桌面程序填写账户和接口信息、完成独立 Chrome 登录与授权，运行 `一键自检.bat` 确认 `Errors: 0` 后才启动监控。首次安装不得覆盖已有 `config.json`。
 
@@ -78,10 +79,12 @@ py -3 -m py_compile 自动关推广\main_accounts.py 自动关推广\import_acco
 ## 已知问题与边界
 
 - 自动化测试是离线回归测试，14 项通过不等于真实巨量接口、授权、Chrome 或实际关推广已经验收。
+- 当前自动化测试是离线回归测试，17 项通过不等于真实巨量接口、授权、Chrome 或实际关推广已经验收。
 - 监控同一时间只能运行一个实例；出现“监控已经在运行”时，先用 `停止监控.bat` 处理，再确认锁文件和进程状态，禁止直接删除用户数据目录。
 - Windows 批处理在中文路径/文件名环境可能出现编码问题；已有入口文件应保持原名和目录结构，排错优先使用 README 中的入口和 `一键自检.bat`。
 - 用户反馈过其他电脑缺少运行依赖；新电脑必须执行 `首次安装.bat`，不能只复制 `app` 子目录或某一个 EXE。源码克隆不含离线安装包；没有 Python 时，入口会尝试 `winget` 安装 Python 3.12，无法使用 `winget` 则需完整发布包或管理员安装 Python。
 - 发布、升级和打包行为尚未在本次测试中验证，接手后不得仅凭版本号声称发布可用。
+- EXE 已完成构建和 GUI 子系统验证，但尚未用真实测试账户完成登录、授权、扫描和关推广的端到端验收。
 
 ## 绝对不能误动的数据和配置
 
@@ -93,4 +96,5 @@ py -3 -m py_compile 自动关推广\main_accounts.py 自动关推广\import_acco
 - `自动关推广\data\`：运行状态、监控锁、扫描记录和恢复所需数据。
 - `自动关推广\rizhi\`、根目录 `rizhi\`、根目录 `logs\`：运行日志；程序规则为保留 72 小时，排错时不得擅自清空。
 - `installers\`：离线安装包和发布物；除非用户明确指定发布清理，否则不要删除或覆盖。
+- `release\`、`dist\`、`build\`：本机生成的发布和构建产物；可用于交付，但不提交 Git，重新构建前不得覆盖唯一发布备份。
 - `app.previous`、旧版本备份、用户自行保存的发布包：属于回滚资料，未经明确授权不得处理。

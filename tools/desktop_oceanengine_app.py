@@ -19,10 +19,11 @@ from datetime import datetime
 from pathlib import Path
 from tkinter import messagebox, simpledialog
 from account_config_ui import load_config_for_edit, open_account_config, save_config as save_config_for_edit
+from config_validation import enabled_main_accounts, validate_monitor_config
 
 
 CREATE_NO_WINDOW = 0x08000000
-APP_VERSION = "1.2.0"
+APP_VERSION = "1.2.1"
 IS_FROZEN = bool(getattr(sys, "frozen", False))
 APP_DIR = Path(sys.executable).resolve().parent if IS_FROZEN else Path(__file__).resolve().parents[1]
 SOURCE_AD_DIR = Path(__file__).resolve().parents[1] / "自动关推广"
@@ -211,10 +212,9 @@ def self_check_text():
     else:
         try:
             config = read_json(CONFIG_FILE)
-            accounts = [item for item in config.get("main_accounts", []) if item and item.get("enabled") is not False]
-            if not accounts:
-                errors.append("没有启用的主账户。")
-            else:
+            accounts = enabled_main_accounts(config)
+            errors.extend(validate_monitor_config(config))
+            if accounts:
                 lines.append(f"已启用主账户：{len(accounts)}")
         except Exception as exc:
             errors.append(f"配置读取失败：{exc}")

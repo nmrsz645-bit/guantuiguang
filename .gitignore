@@ -26,6 +26,7 @@ __pycache__/
 installers/
 build/
 dist/
+release/
 app.previous/
 release-runtime-artifacts-*/
 release-test-logs-*/
