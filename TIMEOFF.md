@@ -14,8 +14,10 @@
 - `.gitignore` 排除了账号配置、授权 Token、Chrome profile、日志、运行状态和离线安装包。
 - 已初始化 Git 的 `main` 分支，并创建本地首个提交：`0da63ba 建立自动关推广源码交接仓库`。
 - 已验证核心 Python 脚本可通过 `py -3 -m py_compile`。
-- 已连接并推送至远程仓库：`https://github.com/nmrsz645-bit/-.git`。
+- 已连接并推送至远程仓库：`https://github.com/nmrsz645-bit/guantuiguang.git`。
 - 已回读验证远程 `origin/main` 与本地提交一致。
+- 已新增离线自动化测试：`tests\` 使用 Python 标准库 `unittest`，不会调用真实巨量接口、启动 Chrome，或修改用户账户、Token、浏览器资料及推广状态。
+- 已新增 `run-tests.bat`；验证命令为 `py -3 -m unittest discover -s tests -v`。
 
 ## 未完成
 
@@ -41,6 +43,7 @@ Set-Location 'E:\自动关推广对外版'
 git status --ignored
 git diff --cached --name-only
 python -m py_compile 自动关推广\monitor_oceanengine_units.py tools\monitor_oceanengine_supervisor.py tools\desktop_oceanengine_app.py
+py -3 -m unittest discover -s tests -v
 ```
 
 ## 已知问题
