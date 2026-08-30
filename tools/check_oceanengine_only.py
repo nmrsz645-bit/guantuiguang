@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 AD_DIR = ROOT / "自动关推广"
 errors = 0
 warnings = 0
+allow_unconfigured = "--allow-unconfigured" in sys.argv
 
 
 def ok(text):
@@ -114,7 +115,11 @@ try:
     ok("Config JSON can be parsed")
     accounts = [a for a in config.get("main_accounts", []) if a.get("enabled", True)]
     if not accounts:
-        warn("No enabled main account configured")
+        message = "No enabled main account configured. Open the desktop app and save at least one enabled account before monitoring."
+        if allow_unconfigured:
+            warn(message)
+        else:
+            err(message)
     else:
         ok(f"Enabled main accounts: {len(accounts)}")
         for account in accounts:

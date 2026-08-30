@@ -60,10 +60,18 @@ exit /b 1
 :install_python
 set "ROOT=%~dp0.."
 set "INSTALLER=%ROOT%\installers\python-3.12.10-amd64.exe"
-if not exist "%INSTALLER%" (
-  echo ERROR: Bundled Python installer not found: %INSTALLER%
-  exit /b 1
+if exist "%INSTALLER%" (
+  echo Python not found. Installing bundled Python 3.12...
+  "%INSTALLER%" /quiet InstallAllUsers=0 PrependPath=1 Include_launcher=1 Include_pip=1
+  exit /b 0
 )
-echo Python not found. Installing bundled Python 3.12...
-"%INSTALLER%" /quiet InstallAllUsers=0 PrependPath=1 Include_launcher=1 Include_pip=1
-exit /b 0
+
+where winget >nul 2>nul
+if not errorlevel 1 (
+  echo Bundled Python installer not found. Trying Windows Package Manager...
+  winget install --id Python.Python.3.12 -e --source winget --accept-package-agreements --accept-source-agreements
+  exit /b %errorlevel%
+)
+
+echo ERROR: Python was not found. Add installers\python-3.12.10-amd64.exe or install Python 3.12 manually with Add Python to PATH.
+exit /b 1

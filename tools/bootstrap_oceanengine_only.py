@@ -1,4 +1,5 @@
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -32,8 +33,25 @@ def install_chrome_if_needed():
     run(["msiexec", "/i", installers[0], "/qn", "/norestart"])
 
 
+def ensure_initial_config():
+    target = ROOT / "自动关推广" / "config.json"
+    if target.exists():
+        print("OK: Existing local config preserved")
+        return False
+    example = ROOT / "config.example.json"
+    if not example.exists():
+        raise RuntimeError(f"Missing default config template: {example}")
+    target.parent.mkdir(parents=True, exist_ok=True)
+    temp = target.with_suffix(".tmp")
+    shutil.copyfile(example, temp)
+    temp.replace(target)
+    print("OK: Created local config from config.example.json")
+    return True
+
+
 def main():
     install_chrome_if_needed()
+    ensure_initial_config()
     script = ROOT / "tools" / "install_oceanengine_only.py"
     raise SystemExit(run([sys.executable, script]))
 

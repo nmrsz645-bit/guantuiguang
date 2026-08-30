@@ -50,14 +50,15 @@ def main():
     print("========================================")
     install_packages()
     ensure_dirs()
-    run([sys.executable, str(ROOT / "tools" / "check_oceanengine_only.py")])
+    run([sys.executable, str(ROOT / "tools" / "check_oceanengine_only.py"), "--allow-unconfigured"])
     print()
     print("Install finished.")
     print("Next:")
-    print("1. Double click 打开巨量登录.bat and login dedicated Chrome windows.")
-    print("2. Double click 写入巨量授权码.bat or 自动导入巨量账号授权.bat.")
-    print("3. Double click 一键自检.bat.")
-    print("4. Double click 启动监控.bat.")
+    print("1. Double click 自动关推广本地程序.bat and configure accounts and API details.")
+    print("2. Double click 打开巨量登录.bat and login dedicated Chrome windows.")
+    print("3. Double click 写入巨量授权码.bat or 自动导入巨量账号授权.bat.")
+    print("4. Double click 一键自检.bat. It must show Errors: 0.")
+    print("5. Double click 启动监控.bat.")
 
 
 if __name__ == "__main__":
