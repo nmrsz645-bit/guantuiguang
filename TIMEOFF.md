@@ -19,7 +19,8 @@
 - 已在本机执行 `py -3 -m unittest discover -s tests -v`：17 项测试全部通过，其中包含首次配置创建与已有配置保护、完整接口配置校验及端口/账户 ID 冲突校验。
 - 已在本机执行 `py -3 -m py_compile 自动关推广\main_accounts.py 自动关推广\import_account_texts.py 自动关推广\monitor_oceanengine_units.py`：通过。
 - 已在隔离目录从远程 `origin/main` 真实克隆，建立干净虚拟环境并执行首次安装流程：依赖安装、初始配置创建、严格自检、17 项测试、全量编译和本地程序自测均通过。
-- 已构建 `release\自动关推广-v1.2.1\自动关推广.exe`，PE 子系统为 GUI（`2`），不显示命令窗口；生成的 `release\` 目录已被 Git 忽略，不能替代源码提交。
+- 已构建 `release\自动关推广-v1.2.1\自动关推广.exe`，PE 子系统为 GUI（`2`），不显示命令窗口；使用隔离虚拟账户配置实际运行 `--self-check`，日志确认 requests、websocket、Chrome 和账户配置均正常，进程已退出且无残留后台进程。
+- 已生成可直接分发的 `release\自动关推广-v1.2.1.zip`，其中仅含 EXE、示例配置、说明和 `SHA256SUMS.txt`，不含任何用户数据；ZIP SHA-256：`6F920A07246E60BFB32C260ADECAAB88885952481F64D1387CD000D3DB92EFC9`。
 
 ## 未完成事项
 
@@ -55,6 +56,7 @@ py -3 -m unittest discover -s tests -v
 - 自动化测试：`E:\自动关推广对外版\tests\`
 - 测试入口：`E:\自动关推广对外版\run-tests.bat`
 - 示例配置：`E:\自动关推广对外版\config.example.json`
+- 可分发发布包：`E:\自动关推广对外版\release\自动关推广-v1.2.1.zip`
 - 安装与启动入口：`E:\自动关推广对外版\首次安装.bat`、`打开巨量登录.bat`、`一键自检.bat`、`启动监控.bat`、`自动关推广本地程序.bat`
 
 ## 运行与验证命令
@@ -83,7 +85,7 @@ py -3 -m py_compile 自动关推广\main_accounts.py 自动关推广\import_acco
 - 统一 Python 启动器会设置 UTF-8 控制台代码页和 Python 输出编码；已有入口文件应保持原名和目录结构，排错优先使用 README 中的入口和 `一键自检.bat`。
 - 用户反馈过其他电脑缺少运行依赖；新电脑必须执行 `首次安装.bat`，不能只复制 `app` 子目录或某一个 EXE。源码克隆不含离线安装包；没有 Python 时，入口会尝试 `winget` 安装 Python 3.12，无法使用 `winget` 则需完整发布包或管理员安装 Python。
 - 发布、升级和打包行为尚未在本次测试中验证，接手后不得仅凭版本号声称发布可用。
-- EXE 已完成构建和 GUI 子系统验证，但尚未用真实测试账户完成登录、授权、扫描和关推广的端到端验收。
+- EXE 已完成构建、隔离运行和 GUI 子系统验证，但尚未用真实测试账户完成登录、授权、扫描和关推广的端到端验收。
 
 ## 绝对不能误动的数据和配置
 
