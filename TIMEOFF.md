@@ -17,7 +17,7 @@
 - 正式桌面版：`tools\desktop_oceanengine_app.py` 由 `tools\build_desktop_release.py` 使用 PyInstaller 构建为无黑框 EXE；当前本机已生成并验证 `v1.2.1`。
 - 用户流程：首次安装 -> 软件内填写账户与千川接口 -> 每个主账户独立 Chrome 登录 -> 授权 -> 一键自检 `Errors: 0` -> 启动监控。
 - 并发规则：启用“一账户/投放账户一个独立浏览器”后，通过 `parallel_browser_count` 控制同时检测数量；账户端口和投放账户 ID 不允许重复。
-- 可交付物：开发者使用 GitHub 源码仓库；普通用户使用 `release\自动关推广-v1.2.1.zip`。两种交付均不包含用户配置、Token、登录资料或历史状态。
+- 可交付物：开发者使用 GitHub 源码仓库；普通用户使用单独传输的 `release\自动关推广-v1.2.1.zip`。`release\` 被 Git 忽略，不会随克隆下载；开发者可按本文构建，普通用户需由发布方单独发送 ZIP。两种交付均不包含用户配置、Token、登录资料或历史状态。
 
 ## 已完成并验证
 
@@ -56,7 +56,7 @@ py -3 -m unittest discover -s tests -v
 
 确认后，如是在新电脑，再按 `README.md` 的“新电脑首次使用”执行：首次安装会在配置不存在时自动生成本机 `config.json`，再通过桌面程序填写账户和接口信息、完成独立 Chrome 登录与授权，运行 `一键自检.bat` 确认 `Errors: 0` 后才启动监控。首次安装不得覆盖已有 `config.json`。
 
-对于普通用户，直接解压 `release\自动关推广-v1.2.1.zip`，核对 `SHA256SUMS.txt` 后双击 `自动关推广.exe`；首次打开后先点“账户配置”，不要先启动监控。
+对于普通用户，发布方需单独发送 `release\自动关推广-v1.2.1.zip`；用户解压后核对 `SHA256SUMS.txt`，再双击 `自动关推广.exe`。首次打开后先点“账户配置”，不要先启动监控。Git 克隆不能获得该 ZIP。
 
 ## 关键文件与路径
 
