@@ -1,53 +1,96 @@
-# 当前交接
+# 自动关推广交接
 
 ## 当前目标
 
-将 `E:\自动关推广对外版` 作为自动关推广的正式源码根目录，用 Git 安全交接到另一台电脑，同时保留每台电脑独立的账户授权、Token、Chrome 登录状态和运行历史。
+将 `E:\自动关推广对外版` 作为自动关推广的唯一正式源码根目录，通过 GitHub 仓库安全交接到其他电脑或会话；后续在不覆盖每台电脑独立账户授权、Token、Chrome 登录状态、运行状态和日志的前提下，继续完善与发布 Windows 本地程序。
 
-## 已完成
+当前远程仓库：`https://github.com/nmrsz645-bit/guantuiguang.git`。
 
-- 明确正式源码根目录：`E:\自动关推广对外版`。
-- 核心监控代码：`自动关推广\monitor_oceanengine_units.py`。
-- 守护进程：`tools\monitor_oceanengine_supervisor.py`。
-- 桌面程序：`tools\desktop_oceanengine_app.py`。
-- 已新增 `.gitignore`、`README.md`、`AGENTS.md`、`requirements.txt` 和 `config.example.json`。
-- `.gitignore` 排除了账号配置、授权 Token、Chrome profile、日志、运行状态和离线安装包。
-- 已初始化 Git 的 `main` 分支，并创建本地首个提交：`0da63ba 建立自动关推广源码交接仓库`。
-- 已验证核心 Python 脚本可通过 `py -3 -m py_compile`。
-- 已连接并推送至远程仓库：`https://github.com/nmrsz645-bit/guantuiguang.git`。
-- 已回读验证远程 `origin/main` 与本地提交一致。
-- 已新增离线自动化测试：`tests\` 使用 Python 标准库 `unittest`，不会调用真实巨量接口、启动 Chrome，或修改用户账户、Token、浏览器资料及推广状态。
-- 已新增 `run-tests.bat`；验证命令为 `py -3 -m unittest discover -s tests -v`。
+当前已推送提交：`d7562e33be33f43725de0593eb82f36683851953`（`test: add offline regression suite`）。
 
-## 未完成
+## 已完成并验证
 
-- 新电脑克隆后必须重新首次安装、登录和授权；不能从 Git 恢复私密数据。
+- 正式源码根目录已确定为 `E:\自动关推广对外版`，Git 默认分支为 `main`，远程 `origin` 已指向上述 GitHub 仓库。
+- 项目已具备源码交接文件：`.gitignore`、`README.md`、`AGENTS.md`、`requirements.txt`、`config.example.json`。
+- `.gitignore` 已排除用户私密配置、Token、Chrome profile、登录页面、日志、运行状态和离线安装包；最近一次提交未包含这些内容。
+- 核心监控逻辑位于 `自动关推广\monitor_oceanengine_units.py`；账户文本解析和并发浏览器分配位于 `自动关推广\main_accounts.py`；账户导入逻辑位于 `自动关推广\import_account_texts.py`。
+- 桌面程序入口位于 `tools\desktop_oceanengine_app.py`；监控守护进程位于 `tools\monitor_oceanengine_supervisor.py`。
+- 已添加离线自动化测试目录 `tests\` 与测试入口 `run-tests.bat`。测试不会访问巨量引擎、不会启动 Chrome，也不会读取或改动真实账号、Token、浏览器资料或推广状态。
+- 已在本机执行 `py -3 -m unittest discover -s tests -v`：13 项测试全部通过。
+- 已在本机执行 `py -3 -m py_compile 自动关推广\main_accounts.py 自动关推广\import_account_texts.py 自动关推广\monitor_oceanengine_units.py`：通过。
+- 已回读远程 `origin/main`，提交号与本地 `d7562e33be33f43725de0593eb82f36683851953` 一致。
 
-## 下一步（直接执行）
+## 未完成事项
 
-在另一台电脑克隆 `https://github.com/nmrsz645-bit/guantuiguang.git`，然后按照 `README.md` 执行首次安装、专用 Chrome 登录和账户授权；不得从 Git 获取或覆盖用户的私密配置。
+- 未进行真实巨量引擎接口调用、真实 Chrome 登录或真实关闭推广单元的自动化回归；任何此类验证都必须使用用户明确指定的测试账户，并先确认允许关闭范围。
+- 未在一台全新电脑完成“克隆源码 -> 首次安装 -> 登录 -> 授权 -> 自检 -> 启动监控”的完整验收。
+- 当前自动化测试覆盖离线业务规则，不覆盖桌面 EXE 打包、Windows 启动项、升级器、真实网络异常和 UI 自动化。
+- 如需发布新版，必须先从本源码目录构建，做隔离升级/回滚验证，再发布；不能拿用户电脑上任意旧发布目录作为源码。
 
-## 关键路径
+## 下一步具体操作
 
-- 正式源码：`E:\自动关推广对外版`
-- 账户运行配置：`E:\自动关推广对外版\自动关推广\config.json`（私密，不提交）
-- 账户授权与 Token：`E:\自动关推广对外版\自动关推广\tokens`、`账号接口信息`（私密，不提交）
-- 浏览器登录数据：`E:\自动关推广对外版\自动关推广\chrome-profiles`（私密，不提交）
-- 日志：`E:\自动关推广对外版\rizhi`、`E:\自动关推广对外版\自动关推广\rizhi`（不提交）
-- 离线安装包：`E:\自动关推广对外版\installers`（发布物，不提交 Git）
-
-## 验证命令
+第一条操作（直接照做、只读）：在接手电脑克隆或打开仓库后，执行下面命令，确认源码状态和提交一致；在结果正常前不要修改、安装、授权或启动监控。
 
 ```powershell
 Set-Location 'E:\自动关推广对外版'
-git status --ignored
-git diff --cached --name-only
-python -m py_compile 自动关推广\monitor_oceanengine_units.py tools\monitor_oceanengine_supervisor.py tools\desktop_oceanengine_app.py
+git status --short
+git rev-parse HEAD
+git ls-remote origin refs/heads/main
 py -3 -m unittest discover -s tests -v
 ```
 
-## 已知问题
+预期：`git status --short` 无输出；本地与远程提交号一致；13 项测试均为 `OK`。
 
-- Git 远程仓库已迁移并配置为 `https://github.com/nmrsz645-bit/guantuiguang.git`；后续推送前仍必须先检查 `git status`，确认没有私密数据或运行数据被纳入提交。
-- `config.json` 中含 App Secret 和 Token 关联信息，只能保存在用户本机。
-- `chrome-profiles` 很大，且包含登录状态，绝不可纳入仓库。
+确认后，如是在新电脑，再按 `README.md` 的“新电脑首次使用”执行：首次安装、每个主账户独立 Chrome 登录、导入或写入授权、运行 `一键自检.bat`，确认 `Errors: 0` 后才启动监控。
+
+## 关键文件与路径
+
+- 源码根目录：`E:\自动关推广对外版`
+- 核心监控：`E:\自动关推广对外版\自动关推广\monitor_oceanengine_units.py`
+- 账户规则：`E:\自动关推广对外版\自动关推广\main_accounts.py`
+- 账户导入：`E:\自动关推广对外版\自动关推广\import_account_texts.py`
+- 桌面界面：`E:\自动关推广对外版\tools\desktop_oceanengine_app.py`
+- 守护进程：`E:\自动关推广对外版\tools\monitor_oceanengine_supervisor.py`
+- 自动化测试：`E:\自动关推广对外版\tests\`
+- 测试入口：`E:\自动关推广对外版\run-tests.bat`
+- 示例配置：`E:\自动关推广对外版\config.example.json`
+- 安装与启动入口：`E:\自动关推广对外版\首次安装.bat`、`打开巨量登录.bat`、`一键自检.bat`、`启动监控.bat`、`自动关推广本地程序.bat`
+
+## 运行与验证命令
+
+```powershell
+Set-Location 'E:\自动关推广对外版'
+
+# 源码、远程与私密文件检查
+git status --short
+git check-ignore -v '自动关推广\config.json' '自动关推广\tokens\example.json' '自动关推广\chrome-profiles\Default\Preferences'
+git rev-parse HEAD
+git ls-remote origin refs/heads/main
+
+# 离线自动化测试与语法检查
+py -3 -m unittest discover -s tests -v
+py -3 -m py_compile 自动关推广\main_accounts.py 自动关推广\import_account_texts.py 自动关推广\monitor_oceanengine_units.py
+
+# 真实运行前的本机自检（会读取本机配置，但不应启动监控）
+.\一键自检.bat
+```
+
+## 已知问题与边界
+
+- 自动化测试是离线回归测试，13 项通过不等于真实巨量接口、授权、Chrome 或实际关推广已经验收。
+- 监控同一时间只能运行一个实例；出现“监控已经在运行”时，先用 `停止监控.bat` 处理，再确认锁文件和进程状态，禁止直接删除用户数据目录。
+- Windows 批处理在中文路径/文件名环境可能出现编码问题；已有入口文件应保持原名和目录结构，排错优先使用 README 中的入口和 `一键自检.bat`。
+- 用户反馈过其他电脑缺少运行依赖；新电脑必须执行 `首次安装.bat`，不能只复制 `app` 子目录或某一个 EXE。
+- 发布、升级和打包行为尚未在本次测试中验证，接手后不得仅凭版本号声称发布可用。
+
+## 绝对不能误动的数据和配置
+
+以下内容仅属于具体用户电脑，不得提交 Git、不得用仓库版本覆盖、不得为了排错删除：
+
+- `自动关推广\config.json`：包含 App ID、App Secret、账户映射和本机运行配置。
+- `自动关推广\tokens\`、`自动关推广\账号接口信息\`：Token、授权信息和账户资料。
+- `自动关推广\chrome-profiles\`、`自动关推广\chrome-debug-profile\`、`自动关推广\login-pages\`：Chrome 登录状态和独立浏览器资料。
+- `自动关推广\data\`：运行状态、监控锁、扫描记录和恢复所需数据。
+- `自动关推广\rizhi\`、根目录 `rizhi\`、根目录 `logs\`：运行日志；程序规则为保留 72 小时，排错时不得擅自清空。
+- `installers\`：离线安装包和发布物；除非用户明确指定发布清理，否则不要删除或覆盖。
+- `app.previous`、旧版本备份、用户自行保存的发布包：属于回滚资料，未经明确授权不得处理。
