@@ -84,7 +84,7 @@ gh release view v1.2.1 --repo nmrsz645-bit/guantuiguang --json tagName,assets,ur
 
 因此本项目目前没有下载站发布步骤；不要编造 OSS 上传、catalog 修改、HTML 卡片 ID 或客户端自动更新协议。若后续单独添加网站卡片，网站维护者应以共享指南的 [website](https://github.com/nmrsz645-bit/software-download-center/blob/docs-cross-pc-handoff/docs/PUBLISHING.md#website)、[catalog](https://github.com/nmrsz645-bit/software-download-center/blob/docs-cross-pc-handoff/docs/PUBLISHING.md#catalog)、[client-update](https://github.com/nmrsz645-bit/software-download-center/blob/docs-cross-pc-handoff/docs/PUBLISHING.md#client-update)、[verify-rollback](https://github.com/nmrsz645-bit/software-download-center/blob/docs-cross-pc-handoff/docs/PUBLISHING.md#verify-rollback) 与 [credentials](https://github.com/nmrsz645-bit/software-download-center/blob/docs-cross-pc-handoff/docs/PUBLISHING.md#credentials) 为通用约束；本项目仍需明确自己的新卡片 ID、静态 `index.html` 改动、外部 catalog 对象及其字段后才能执行。
 
-本次检查时该仓库的 `docs-cross-pc-handoff` 分支尚不存在，所以上述链接是等待网站更新会话发布后的协作入口，不是已验证可读的项目发布流程。本项目本轮不会写该仓库、不会上传 OSS，也不会部署 Pages。
+已核验共享指南位于下载站仓库的 `docs-cross-pc-handoff` 分支；它是公开基础设施的通用约束，不是本项目已实现自动更新或网站映射的证明。本项目本轮不会写该仓库、不会上传 OSS，也不会部署 Pages。
 
 ## 6. 发布后验证与回滚
 
