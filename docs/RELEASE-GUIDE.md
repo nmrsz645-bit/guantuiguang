@@ -20,16 +20,16 @@ git ls-remote origin refs/heads/main refs/tags/v1.2.1
 
 ### 依赖与离线验证
 
-- Windows 10/11、Git、Python 3.12 或 3.13；本项目已验证的构建环境为 Python 3.13.15 与 PyInstaller 6.22.2。
+- Windows 10/11、Git、Python 3.12 或 3.13；本项目已验证的构建环境为 **Python 3.13.15** 与 **PyInstaller 6.22.2**。以下开发/构建示例固定使用 `py -3.13`，避免 `py -3` 选择未验证的解释器。
 - `requirements.txt` 的准确版本下限为 `requests>=2.31`、`websocket-client>=1.8`、`python-dotenv>=1.0`；PyInstaller 不在 requirements 中，构建时单独安装。
 - Google Chrome 仅在用户实际登录/监控时需要；离线单元测试不需要 Chrome、账户或网络接口。
 
 ```powershell
-py -3 --version
-py -3 -m pip install -r requirements.txt
-py -3 -m pip install pyinstaller
-py -3 -m unittest discover -s tests -v
-py -3 -m compileall -q .
+py -3.13 --version
+py -3.13 -m pip install -r requirements.txt
+py -3.13 -m pip install "pyinstaller==6.22.2"
+py -3.13 -m unittest discover -s tests -v
+py -3.13 -m compileall -q .
 ```
 
 也可在源码根目录运行 `首次安装.bat`。它实际调用 `tools/run_py.bat` 和 `tools/bootstrap_oceanengine_only.py`：只有当 `自动关推广\config.json` 不存在时才由 `config.example.json` 创建模板，并可能使用 `winget` 安装 Python 或用 pip 安装依赖。它不是离线保证，也不应在未经许可的企业设备上假定可安装系统软件。
@@ -44,11 +44,21 @@ Git 只迁移源码、批处理入口、测试、示例配置与文档。不得�
 
 浏览器登录态不可作为可分发资料；Windows DPAPI 保护的凭据即使存在也可能绑定到原用户/机器，不能作为跨电脑迁移方案。当前源码不包含 DPAPI 导出/导入工具，因此新电脑必须由用户在本机完成账户配置、Chrome 登录和授权。
 
+### 源码 GUI 启动
+
+标准源码 GUI 入口是根目录 `自动关推广本地程序.bat`，它会转交给 `tools/run_py.bat` 并启动 `tools/local_oceanengine_app.py`。若要固定到已验证的 Python 3.13.15，直接在源码根目录执行：
+
+```powershell
+py -3.13 .\tools\local_oceanengine_app.py
+```
+
+此命令会打开本地管理界面；它本身不启动监控。不要以 `启动监控.bat` 代替 GUI 启动，因为后者会启动实际监控守护进程。
+
 ## 3. 版本、完整包、哈希与正式发布
 
 1. 仅在计划发布新版本时修改 `tools/desktop_oceanengine_app.py` 中的 `APP_VERSION`；不能为了重新上传同一包而重写已有 tag。
-2. 在干净隔离副本运行第 2 节的离线验证，然后运行 `build-desktop-release.bat`。该批处理实际调用 `tools/build_desktop_release.py`。
-3. 现有脚本只生成完整包，没有增量/差分包、补丁包或升级器：
+2. 在干净隔离副本运行第 2 节的离线验证，然后按第 3 步用固定解释器执行实际构建脚本。根目录 `build-desktop-release.bat` 是兼容入口，但不作为固定解释器构建命令。
+3. 以已验证解释器执行实际构建脚本 `py -3.13 .\tools\build_desktop_release.py`。根目录 `build-desktop-release.bat` 也是标准入口，但它经 `tools/run_py.bat` 调用泛化的 `py -3`；需要固定到 3.13.15 时不要用该批处理。现有脚本只生成完整包，没有增量/差分包、补丁包或升级器：
    - 本地完整目录：`release\自动关推广-v<版本>\`；
    - 本地完整 ZIP：`release\自动关推广-v<版本>.zip`；
    - 文件夹内有 EXE、`config.example.json`、README、HANDOFF、`使用说明.txt` 和 `SHA256SUMS.txt`。
@@ -59,9 +69,48 @@ Git 只迁移源码、批处理入口、测试、示例配置与文档。不得�
    Get-Content 'release\自动关推广-v<版本>\SHA256SUMS.txt'
    ```
 
-5. 审查 ZIP 不含真实 `config.json`、Token、Cookie、Chrome profile、账号文本、日志、`data\`、`.env` 或个人资料后，创建新的 tag 和 GitHub Release，再上传 ZIP。GitHub Release 的公开资产名采用 ASCII `guantuiguang-v<版本>.zip`；ZIP 内顶层目录仍为 `自动关推广-v<版本>`。
+5. 审查 ZIP 不含真实 `config.json`、Token、Cookie、Chrome profile、账号文本、日志、`data\`、`.env` 或个人资料后，按下面的“未来正式发布命令”创建新的 tag 和 GitHub Release。GitHub Release 的公开资产名采用 ASCII `guantuiguang-v<版本>.zip`；ZIP 内顶层目录仍为 `自动关推广-v<版本>`。
 
 当前 `v1.2.1` 正式附件是 `guantuiguang-v1.2.1.zip`，其 SHA-256 以该 Release 页面和 Release 说明为准。Git push 只同步源码；它不等于客户端更新、OSS 上传或下载站更新。
+
+### 未来正式发布命令（本轮未执行）
+
+以下命令仅在**新版本已获批准**、`APP_VERSION` 已变更、构建/安全审查完成且工作区干净时执行。它们不适用于补传现有 `v1.2.1`，也不允许覆盖已有 tag、Release 或资产。
+
+```powershell
+# 在隔离构建副本的仓库根目录；先从 APP_VERSION 读取版本，避免手工不一致。
+$version = py -3.13 -c "import re; from pathlib import Path; text = Path('tools/desktop_oceanengine_app.py').read_text(encoding='utf-8'); print(re.search(r'^APP_VERSION\s*=\s*\"([^\"]+)\"', text, re.M).group(1))"
+git status --short
+git ls-remote --tags origin "refs/tags/v$version" "refs/tags/v$version^{}"
+
+# 只有上一步未返回同名 tag、测试/编译已通过时才构建。
+py -3.13 -m pip install -r requirements.txt
+py -3.13 -m pip install "pyinstaller==6.22.2"
+py -3.13 -m unittest discover -s tests -v
+py -3.13 -m compileall -q .
+py -3.13 .\tools\build_desktop_release.py
+
+# 脚本生成中文本地文件名；复制 ASCII 名称后上传，两个 ZIP 的 SHA-256 必须相同。
+$localZip = "release\自动关推广-v$version.zip"
+$uploadZip = "release\guantuiguang-v$version.zip"
+Copy-Item -LiteralPath $localZip -Destination $uploadZip -ErrorAction Stop
+$sha256 = (Get-FileHash -Algorithm SHA256 -LiteralPath $uploadZip).Hash.ToLowerInvariant()
+Get-FileHash -Algorithm SHA256 -LiteralPath $localZip, $uploadZip
+
+# 正常提交并推送源码；绝不使用 --force。此前必须已用明确路径审查并暂存本次变动。
+git diff --cached --name-only
+git commit -m "release: v$version"
+git push origin main
+git tag -a "v$version" -m "Release v$version"
+git push origin "v$version"
+
+# tag 已在远端后才创建 Release；--verify-tag 会阻止未推送 tag 时误建 Release。
+$notes = "完整 Windows 桌面包。`n`nZIP SHA-256：$sha256`n`n仅完成离线验证；真实巨量登录、接口调用和关闭推广未验收。"
+gh release create "v$version" $uploadZip --repo nmrsz645-bit/guantuiguang --title "自动关推广 v$version" --notes $notes --verify-tag
+gh release view "v$version" --repo nmrsz645-bit/guantuiguang --json tagName,assets,url
+```
+
+提交前必须以明确路径审查并暂存本次源码、测试与文档文件；不得用 `git add .` 把配置、Token、构建物或用户数据带入提交。发布者也可以在 GitHub 网页的 **Releases → Draft a new release** 中选择已存在的 `v<版本>` tag、填写标题/说明、上传 `$uploadZip` 并发布；网页操作后同样必须重新读取资产名、大小与 SHA-256。
 
 ## 4. 客户端更新的真实机制
 

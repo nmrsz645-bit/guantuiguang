@@ -31,7 +31,7 @@
 
 ## 本机运行环境
 
-- 支持 Windows 10/11、Python 3.12 或 3.13、Git；本轮构建环境为 Python 3.13。
+- 支持 Windows 10/11、Python 3.12 或 3.13、Git；本轮已验证 Python 3.13.15 与 PyInstaller 6.22.2，开发/构建命令固定使用 `py -3.13`。
 - 运行依赖：`requests`、`websocket-client`、`python-dotenv`，见 `requirements.txt`。
 - 发行构建额外需要 `PyInstaller`；普通用户运行 EXE 不需要 Python。
 - 实际登录/监控需要本机 Chrome 和用户自行取得的巨量授权；离线测试不需要。
@@ -39,10 +39,10 @@
 开发环境命令：
 
 ```powershell
-py -3 -m pip install -r requirements.txt
-py -3 -m pip install pyinstaller
-py -3 -m unittest discover -s tests -v
-py -3 -m compileall -q .
+py -3.13 -m pip install -r requirements.txt
+py -3.13 -m pip install "pyinstaller==6.22.2"
+py -3.13 -m unittest discover -s tests -v
+py -3.13 -m compileall -q .
 ```
 
 ## 安全配置与获取方式
@@ -66,7 +66,7 @@ py -3 -m compileall -q .
    - `release/自动关推广-v1.2.1/`，包含 EXE、`config.example.json`、README、HANDOFF、`使用说明.txt` 与 `SHA256SUMS.txt`；
    - `release/自动关推广-v1.2.1.zip`，以同名文件夹为 ZIP 根目录。
 4. 审查 ZIP 文件名与内容，确认不含 `config.json`、`tokens/`、`chrome-profiles/`、`账号接口信息/`、日志、`data/`、`.env` 或个人资料；再计算并记录 ZIP SHA-256。
-5. 为与 `APP_VERSION` 一致的源提交创建新 tag `v1.2.1`，创建 GitHub Release 并上传该 ZIP。GitHub 资产名使用 ASCII `guantuiguang-v1.2.1.zip`，但 ZIP 内顶层文件夹保持 `自动关推广-v1.2.1`。不要强推、重打已有 tag、覆盖旧附件或删除旧 Release。
+5. 未来新版本的 tag、推 tag 与 `gh release create --verify-tag` 命令见 [docs/RELEASE-GUIDE.md](docs/RELEASE-GUIDE.md#3-版本完整包哈希与正式发布)。GitHub 资产名使用 ASCII `guantuiguang-v<版本>.zip`，但 ZIP 内顶层文件夹保持 `自动关推广-v<版本>`。不要强推、重打已有 tag、覆盖旧附件或删除旧 Release。
 6. 发布后从 GitHub API/网页重新确认 tag 指向、Release 资产名、资产大小和哈希；仅本地成功构建不等于发布完成。
 
 脚本对同版本的 `release` 文件夹或 ZIP 存在时会失败，目的是保护现有产物。必须发布新版本时，先更改并测试应用版本后再构建；不可通过删除唯一旧包来“重新发布”。

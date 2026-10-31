@@ -22,15 +22,15 @@ Windows 本地桌面程序。它根据本机配置读取巨量引擎投放账户
 
 - Windows 10/11
 - Git
-- Python 3.12 或 3.13（`py -3 --version` 可确认）
+- Python 3.12 或 3.13；本项目已验证 Python 3.13.15，以下开发/构建命令固定使用 `py -3.13`
 - 网络用于安装 Python 依赖；Chrome 仅在实际登录或监控时需要
 
 在仓库根目录执行：
 
 ```powershell
-py -3 -m pip install -r requirements.txt
-py -3 -m unittest discover -s tests -v
-py -3 -m compileall -q .
+py -3.13 -m pip install -r requirements.txt
+py -3.13 -m unittest discover -s tests -v
+py -3.13 -m compileall -q .
 ```
 
 这些测试只覆盖离线规则：不会访问巨量接口、不会启动 Chrome、不会读取本机账户文件，也不会关闭推广。
@@ -49,6 +49,8 @@ py -3 -m compileall -q .
 | `启动监控.bat` | 启动守护进程与检测循环 | **是** |
 | `停止监控.bat` | 发送停止信号并结束本程序启动的监控 | 会停止本程序子进程 |
 | `一键状态面板.bat` | 读取锁、日志和最近状态 | 否 |
+
+源码 GUI 的标准入口是 `自动关推广本地程序.bat`。需要固定解释器时，使用 `py -3.13 .\tools\local_oceanengine_app.py`；不要把 `启动监控.bat` 当作 GUI 启动命令。
 
 ## 配置与安全
 
@@ -81,14 +83,14 @@ py -3 -m compileall -q .
 在隔离、干净的源码副本中构建：
 
 ```powershell
-py -3 -m pip install -r requirements.txt
-py -3 -m pip install pyinstaller
-py -3 -m unittest discover -s tests -v
-py -3 -m compileall -q .
-build-desktop-release.bat
+py -3.13 -m pip install -r requirements.txt
+py -3.13 -m pip install "pyinstaller==6.22.2"
+py -3.13 -m unittest discover -s tests -v
+py -3.13 -m compileall -q .
+py -3.13 .\tools\build_desktop_release.py
 ```
 
-构建会生成：
+`build-desktop-release.bat` 也是标准入口，但它通过 `tools/run_py.bat` 调用泛化的 `py -3`；为固定到已验证的 Python 3.13.15，使用上面的直接脚本命令。构建会生成：
 
 - `release\自动关推广-v<版本>\`：EXE、配置模板、README、HANDOFF、使用说明和 `SHA256SUMS.txt`；
 - `release\自动关推广-v<版本>.zip`：上述文件夹的可上传 Release 附件。
