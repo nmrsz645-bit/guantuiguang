@@ -1,67 +1,96 @@
 # 自动关推广
 
-这是一个 Windows 本地程序：按配置读取巨量引擎投放账户的单元状态；当单元已满足二维码预览条件时，只关闭该单元开关，不删除单元，也不关闭项目。
+Windows 本地桌面程序。它根据本机配置读取巨量引擎投放账户中的单元状态；仅当单元满足二维码预览条件时，才会尝试关闭该单元的投放开关。它不会删除单元，也不会关闭项目。
 
-## 新电脑首次使用
+当前正式源码版本为 **1.2.1**。完整的维护交接信息请先读 [HANDOFF.md](HANDOFF.md)，协作与敏感数据规则见 [AGENTS.md](AGENTS.md)。
 
-1. 复制整个发布文件夹，不要只复制某一个 `app` 子目录。
-2. 运行 `首次安装.bat`。若本机没有 Python，会优先使用发布包内安装器；源码克隆没有安装器时会尝试通过 Windows `winget` 安装 Python。首次安装只会在 `自动关推广\config.json` 不存在时，从 `config.example.json` 创建初始配置，绝不覆盖已有配置。
-3. 运行 `自动关推广本地程序.bat`，点击“账户配置”，填写投放账户 ID、千川 App ID、App Secret 和回调地址并保存。
-4. 运行 `打开巨量登录.bat`，在每个主账户各自的专用 Chrome 窗口完成登录。
-5. 将每个账户的授权信息放入 `自动关推广\账号接口信息`，再运行 `自动导入巨量账号授权.bat`；也可以运行 `写入巨量授权码.bat` 手动授权。
-6. 运行 `一键自检.bat`，必须看到 `Errors: 0`。
-7. 运行 `启动监控.bat`。
+> 安全边界：本仓库和 Release 不含账户 ID、App Secret、Token、Cookie、浏览器登录资料、真实配置、日志或运行状态。程序只有在本机账户已启用、授权完成，并且配置允许关闭时才可能改变投放状态。首次验证请保持只检测模式，或不要启动监控。
 
-## 源码与用户数据
+## 普通用户：从 Release 安装
 
-Git 仓库只保存代码、批处理入口、说明和示例配置。以下内容只留在每台电脑本地，绝不能提交或覆盖：
+1. 在 GitHub Release 下载完整的 `自动关推广-v1.2.1.zip`，解压整个文件夹。不要只复制 `自动关推广.exe`。
+2. 确认 Windows 已安装 Google Chrome。EXE 自带 Python 运行时，不需要单独安装 Python。
+3. 双击 `自动关推广.exe`，在“账户配置”中填写自己拥有并获授权的投放账户 ID、App ID、App Secret 和授权回调地址后保存。
+4. 使用“打开巨量登录”在每个主账户的专用 Chrome 窗口完成登录；再使用“写入授权码”或从本机 `账号接口信息` 导入授权。
+5. 运行“一键自检”，仅在显示 `Errors: 0` 后，才考虑启动监控。
 
-- `自动关推广\config.json`、Token、App Secret、账户授权文件
-- `自动关推广\chrome-profiles`、`chrome-debug-profile`、`login-pages`
-- `自动关推广\data`、日志、任务状态和运行锁
-- `installers` 中的离线安装包
+首次运行会在 EXE 同级的 `data` 文件夹保存本机配置、Token、Chrome profile、日志和运行状态。升级时保留整个旧 `data` 文件夹；不要将它提交到 Git、上传公开链接或与其他电脑混用。
 
-新电脑克隆代码后，需要重新执行首次安装、账户配置、登录和授权；不要从旧电脑复制配置、浏览器档案或 Token 到公开仓库。纯源码克隆不包含 `installers` 中的离线安装包；没有 Python 且无法使用 `winget` 的电脑，应使用完整发布包或由管理员安装 Python 3.12。
+## 开发者：从源码运行
 
-## 运行与排错
+### 环境
 
-- 日志：`rizhi`、`自动关推广\rizhi`
-- 配置：`自动关推广\config.json`，示例见根目录 `config.example.json`
-- 依赖：`requirements.txt`
-- 监控同一时间只能启动一份；先运行 `停止监控.bat` 再启动新的实例。
+- Windows 10/11
+- Git
+- Python 3.12 或 3.13（`py -3 --version` 可确认）
+- 网络用于安装 Python 依赖；Chrome 仅在实际登录或监控时需要
 
-## 自动化测试
-
-测试只校验离线规则，不会访问巨量接口、不启动 Chrome，也不会读取或改动真实账号、Token、浏览器登录资料和推广状态。
-
-在项目根目录双击 `run-tests.bat`，或运行：
+在仓库根目录执行：
 
 ```powershell
+py -3 -m pip install -r requirements.txt
 py -3 -m unittest discover -s tests -v
+py -3 -m compileall -q .
 ```
 
-当前覆盖：账户文本解析、账户导入后的旧账户停用规则、并发浏览器分配、Token 失效判定、单元状态判定、关闭保护、接口响应解析，以及 72 小时日志清理规则。
+这些测试只覆盖离线规则：不会访问巨量接口、不会启动 Chrome、不会读取本机账户文件，也不会关闭推广。
 
-## 无黑框 EXE 发布
+首次在源码目录配置本机环境时，可运行 `首次安装.bat`。它会在 `自动关推广\config.json` 不存在时由 `config.example.json` 创建初始模板；已有配置不会被覆盖。该流程可能通过 `winget` 安装 Python 或通过 pip 下载依赖，因此不应在没有网络/安装权限的环境中假定它能成功。
 
-开发人员在已安装 Python 和 PyInstaller 的电脑上双击 `build-desktop-release.bat`。它会生成 `release\自动关推广-v<版本号>\自动关推广.exe`：这是无需 Python、双击后不显示命令窗口的桌面版。
+### 常用入口
 
-构建前先安装 PyInstaller：
+| 入口 | 用途 | 是否会触发实际监控 |
+| --- | --- | --- |
+| `自动关推广本地程序.bat` / `自动关推广.exe` | 打开本地管理界面和账户配置 | 否 |
+| `打开巨量登录.bat` | 为已启用主账户启动专用 Chrome 登录窗口 | 否，但会打开浏览器 |
+| `写入巨量授权码.bat` | 粘贴 OAuth 回调链接/授权码 | 否 |
+| `自动导入巨量账号授权.bat` | 从本机账号文本目录导入授权 | 否 |
+| `一键自检.bat` | 校验依赖、配置、端口和目录 | 否 |
+| `启动监控.bat` | 启动守护进程与检测循环 | **是** |
+| `停止监控.bat` | 发送停止信号并结束本程序启动的监控 | 会停止本程序子进程 |
+| `一键状态面板.bat` | 读取锁、日志和最近状态 | 否 |
+
+## 配置与安全
+
+模板文件是 `config.example.json`；实际文件必须是本机未跟踪的 `自动关推广\config.json`。每个主账户需要独立且有效的：
+
+- 投放账户 ID；
+- 巨量应用的 App ID、App Secret 和已登记的回调地址；
+- 专用 Chrome 调试端口和 profile 目录；
+- 本机 Token 文件路径。
+
+请只从本人有权限的巨量引擎/应用管理页面获取这些值。不要猜测、生成或在 Issue、Commit、Release 说明、截图或日志中粘贴任何 Secret/Token。模板中主账户默认 `enabled: false`，用于阻止未配置时运行；启用账户前先检查账户 ID 和端口均不重复。
+
+`dry_run: true` 或命令行 `--no-close` 代表只检测不关闭。实际关闭还受已启用账户、`allow_close`、有效授权及二维码预览条件共同限制；这些保护不是生产账户验收的替代品。
+
+## 常见问题
+
+| 现象 | 先检查什么 |
+| --- | --- |
+| 找不到 Python | 重新运行 `首次安装.bat`，或安装 Python 3.12/3.13 并确保 `py -3` 可用；源码克隆不含离线 Python 安装器。 |
+| `Chrome not found` | 安装 Google Chrome 后重新运行自检。 |
+| 自检不是 `Errors: 0` | 逐项修复缺失依赖、未启用/不完整账户、重复投放账户 ID 或重复调试端口；不要通过伪造 Token 绕过检查。 |
+| 提示需要重新授权或 Token 失效 | 重新打开对应主账户的专用 Chrome，再通过授权入口写入本机授权；不要复制其他电脑的 Token。 |
+| 监控已在运行/无法停止 | 先用 `停止监控.bat`，再检查 `自动关推广\data` 的锁与 `自动关推广\rizhi` 日志；不要直接删除 data、Token 或 profile。 |
+| 升级后找不到历史状态 | 新版 EXE 必须与原 `data` 文件夹一起使用；先备份该文件夹，再替换程序文件。 |
+
+日志位于 `rizhi` 或 `自动关推广\rizhi`；程序的临时日志保留策略为 72 小时。排错时请保留原始日志和配置的脱敏副本，不要上传真实授权资料。
+
+## 构建与发布
+
+在隔离、干净的源码副本中构建：
 
 ```powershell
+py -3 -m pip install -r requirements.txt
 py -3 -m pip install pyinstaller
+py -3 -m unittest discover -s tests -v
+py -3 -m compileall -q .
+build-desktop-release.bat
 ```
 
-发布给普通用户时，复制整个生成的发布文件夹；不要只复制 EXE。用户的 `data` 文件夹包含配置、Token、Chrome 登录资料和运行状态，升级时必须保留。
+构建会生成：
 
-## Git 交接
+- `release\自动关推广-v<版本>\`：EXE、配置模板、README、HANDOFF、使用说明和 `SHA256SUMS.txt`；
+- `release\自动关推广-v<版本>.zip`：上述文件夹的可上传 Release 附件。
 
-本地初始化后可执行：
-
-```powershell
-git status
-git add .
-git commit -m "交接当前自动关推广源码"
-```
-
-要同步到另一台电脑，还需要一个用户自己的空 GitHub 仓库地址，再配置 `git remote add origin <仓库地址>` 和 `git push -u origin main`。未确认仓库地址前，不会自动上传任何内容。
+构建拒绝覆盖同版本的文件夹或 ZIP。发布新版本应先修改并审查应用版本、在全新副本构建和测试、检查 ZIP 内容不含私有数据，再创建新的 Git tag/Release；绝不重写旧 tag、覆盖旧附件或用用户 `data` 文件夹打包。
