@@ -66,7 +66,7 @@ py -3 -m compileall -q .
    - `release/自动关推广-v1.2.1/`，包含 EXE、`config.example.json`、README、HANDOFF、`使用说明.txt` 与 `SHA256SUMS.txt`；
    - `release/自动关推广-v1.2.1.zip`，以同名文件夹为 ZIP 根目录。
 4. 审查 ZIP 文件名与内容，确认不含 `config.json`、`tokens/`、`chrome-profiles/`、`账号接口信息/`、日志、`data/`、`.env` 或个人资料；再计算并记录 ZIP SHA-256。
-5. 为与 `APP_VERSION` 一致的源提交创建新 tag `v1.2.1`，创建 GitHub Release 并上传该 ZIP。不要强推、重打已有 tag、覆盖旧附件或删除旧 Release。
+5. 为与 `APP_VERSION` 一致的源提交创建新 tag `v1.2.1`，创建 GitHub Release 并上传该 ZIP。GitHub 资产名使用 ASCII `guantuiguang-v1.2.1.zip`，但 ZIP 内顶层文件夹保持 `自动关推广-v1.2.1`。不要强推、重打已有 tag、覆盖旧附件或删除旧 Release。
 6. 发布后从 GitHub API/网页重新确认 tag 指向、Release 资产名、资产大小和哈希；仅本地成功构建不等于发布完成。
 
 脚本对同版本的 `release` 文件夹或 ZIP 存在时会失败，目的是保护现有产物。必须发布新版本时，先更改并测试应用版本后再构建；不可通过删除唯一旧包来“重新发布”。

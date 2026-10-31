@@ -8,7 +8,7 @@ Windows 本地桌面程序。它根据本机配置读取巨量引擎投放账户
 
 ## 普通用户：从 Release 安装
 
-1. 在 GitHub Release 下载完整的 `自动关推广-v1.2.1.zip`，解压整个文件夹。不要只复制 `自动关推广.exe`。
+1. 在 GitHub Release 下载完整的 `guantuiguang-v1.2.1.zip` 资产，解压整个文件夹。不要只复制 `自动关推广.exe`。
 2. 确认 Windows 已安装 Google Chrome。EXE 自带 Python 运行时，不需要单独安装 Python。
 3. 双击 `自动关推广.exe`，在“账户配置”中填写自己拥有并获授权的投放账户 ID、App ID、App Secret 和授权回调地址后保存。
 4. 使用“打开巨量登录”在每个主账户的专用 Chrome 窗口完成登录；再使用“写入授权码”或从本机 `账号接口信息` 导入授权。
