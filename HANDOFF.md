@@ -1,6 +1,6 @@
 # 自动关推广维护交接
 
-> 这是面向下一位 Codex/维护者的当前交接文档。先读本文件、[README.md](README.md) 与 [AGENTS.md](AGENTS.md)；不要把 `TIMEOFF.md` 中的旧机器路径、旧构建产物或历史说明当作当前状态。
+> 这是面向下一位 Codex/维护者的当前交接文档。先读本文件、[README.md](README.md)、[docs/RELEASE-GUIDE.md](docs/RELEASE-GUIDE.md) 与 [AGENTS.md](AGENTS.md)；不要把 `TIMEOFF.md` 中的旧机器路径、旧构建产物或历史说明当作当前状态。
 
 ## 版本、仓库与范围
 

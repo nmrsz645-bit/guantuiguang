@@ -2,7 +2,7 @@
 
 Windows 本地桌面程序。它根据本机配置读取巨量引擎投放账户中的单元状态；仅当单元满足二维码预览条件时，才会尝试关闭该单元的投放开关。它不会删除单元，也不会关闭项目。
 
-当前正式源码版本为 **1.2.1**。完整的维护交接信息请先读 [HANDOFF.md](HANDOFF.md)，协作与敏感数据规则见 [AGENTS.md](AGENTS.md)。
+当前正式源码版本为 **1.2.1**。完整的维护交接信息请先读 [HANDOFF.md](HANDOFF.md)，新 Windows 电脑接手、完整包更新及下载站边界见 [docs/RELEASE-GUIDE.md](docs/RELEASE-GUIDE.md)，协作与敏感数据规则见 [AGENTS.md](AGENTS.md)。
 
 > 安全边界：本仓库和 Release 不含账户 ID、App Secret、Token、Cookie、浏览器登录资料、真实配置、日志或运行状态。程序只有在本机账户已启用、授权完成，并且配置允许关闭时才可能改变投放状态。首次验证请保持只检测模式，或不要启动监控。
 
