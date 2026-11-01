@@ -1,6 +1,6 @@
 # 自动关推广交接入口
 
-本文件保留为历史交接入口，避免旧会话或脚本找不到文件；当前完整、可维护的交接内容已迁移至 [HANDOFF.md](HANDOFF.md)。
+本文件保留为历史交接入口，避免旧会话或脚本找不到文件；当前完整、可维护的交接内容已迁移至 [HANDOFF.md](HANDOFF.md)。另一台电脑的安装、启动、源码推送、程序包上传和手工更新命令统一见 [docs/RELEASE-GUIDE.md](docs/RELEASE-GUIDE.md)。
 
 新会话的只读顺序：
 
@@ -10,7 +10,7 @@
    ```powershell
    git status --short
    git rev-parse HEAD
-   git ls-remote origin refs/heads/main refs/tags/v1.2.1
+   git ls-remote origin refs/heads/main 'refs/tags/v1.2.1^{}'
    py -3.13 -m unittest discover -s tests -v
    ```
 

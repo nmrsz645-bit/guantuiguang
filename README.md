@@ -4,6 +4,8 @@ Windows 本地桌面程序。它根据本机配置读取巨量引擎投放账户
 
 当前正式源码版本为 **1.2.1**。完整的维护交接信息请先读 [HANDOFF.md](HANDOFF.md)，新 Windows 电脑接手、完整包更新及下载站边界见 [docs/RELEASE-GUIDE.md](docs/RELEASE-GUIDE.md)，协作与敏感数据规则见 [AGENTS.md](AGENTS.md)。
 
+交给另一台电脑的 Codex：克隆本仓库 `main`，从 HANDOFF 的“另一台电脑的 Codex 从这里开始”执行。程序源码、测试和构建脚本在 Git；可运行完整包在 [GitHub Release](https://github.com/nmrsz645-bit/guantuiguang/releases/tag/v1.2.1)。后续源码推送、新版 ZIP 构建/上传、下载核验、手工更新与回滚的命令均在发布指南中。
+
 > 安全边界：本仓库和 Release 不含账户 ID、App Secret、Token、Cookie、浏览器登录资料、真实配置、日志或运行状态。程序只有在本机账户已启用、授权完成，并且配置允许关闭时才可能改变投放状态。首次验证请保持只检测模式，或不要启动监控。
 
 ## 普通用户：从 Release 安装
@@ -12,7 +14,7 @@ Windows 本地桌面程序。它根据本机配置读取巨量引擎投放账户
 2. 确认 Windows 已安装 Google Chrome。EXE 自带 Python 运行时，不需要单独安装 Python。
 3. 双击 `自动关推广.exe`，在“账户配置”中填写自己拥有并获授权的投放账户 ID、App ID、App Secret 和授权回调地址后保存。
 4. 使用“打开巨量登录”在每个主账户的专用 Chrome 窗口完成登录；再使用“写入授权码”或从本机 `账号接口信息` 导入授权。
-5. 运行“一键自检”，仅在显示 `Errors: 0` 后，才考虑启动监控。
+5. 运行“一键自检”，仅在 EXE 显示“自检通过，可以启动监控。”后，才考虑启动监控。源码 BAT 自检才使用 `Errors: 0` 的输出；两者都不会验证真实 Token 或替代账户验收。
 
 首次运行会在 EXE 同级的 `data` 文件夹保存本机配置、Token、Chrome profile、日志和运行状态。升级时保留整个旧 `data` 文件夹；不要将它提交到 Git、上传公开链接或与其他电脑混用。
 
@@ -63,7 +65,7 @@ py -3.13 -m compileall -q .
 
 请只从本人有权限的巨量引擎/应用管理页面获取这些值。不要猜测、生成或在 Issue、Commit、Release 说明、截图或日志中粘贴任何 Secret/Token。模板中主账户默认 `enabled: false`，用于阻止未配置时运行；启用账户前先检查账户 ID 和端口均不重复。
 
-`dry_run: true` 或命令行 `--no-close` 代表只检测不关闭。实际关闭还受已启用账户、`allow_close`、有效授权及二维码预览条件共同限制；这些保护不是生产账户验收的替代品。
+模板默认账户禁用，但 `dry_run` 为 false 且 `allow_close` 为 true；启用账户后不能假定是只检测。在本机配置设 `dry_run: true` 或取消“允许自动关闭推广”可用于有账户的只检测；`--no-close` 仅适用于监控 Python 脚本，不能传给 EXE 当作关闭保护。只检测仍会访问平台，需要用户授权；离线验收只运行 tests。
 
 ## 常见问题
 
@@ -96,3 +98,5 @@ py -3.13 .\tools\build_desktop_release.py
 - `release\自动关推广-v<版本>.zip`：上述文件夹的可上传 Release 附件。
 
 构建拒绝覆盖同版本的文件夹或 ZIP。发布新版本应先修改并审查应用版本、在全新副本构建和测试、检查 ZIP 内容不含私有数据，再创建新的 Git tag/Release；绝不重写旧 tag、覆盖旧附件或用用户 `data` 文件夹打包。
+
+实际上传命令见 [推送源码](docs/RELEASE-GUIDE.md#source-update)、[构建完整包](docs/RELEASE-GUIDE.md#build) 和 [上传 Release](docs/RELEASE-GUIDE.md#github-release)。当前没有自动更新或本项目下载站卡片：Git push 只保存源码，发布 Release 只增加手动下载入口，已安装用户需停止程序、保留本机 data 后手工更新。
