@@ -6,7 +6,7 @@ v1.3.0 新增网站下载与**启动前由用户选择更新**。业务监控和
 
 ## 下载与第一次启动
 
-在 [下载站](https://download.luotuoqiluotuozhaoma.com/) 找到“自动关推广”，下载完整 Windows ZIP 并解压。也可从 [GitHub Releases](https://github.com/nmrsz645-bit/guantuiguang/releases) 取得同一完整包。
+在 [下载站](https://download.luotuoqiluotuozhaoma.com/) 找到“自动关推广”，下载完整 Windows ZIP 并解压。[GitHub Releases](https://github.com/nmrsz645-bit/guantuiguang/releases) 提供对应源码版本、下载地址和校验说明；是否有 GitHub 二进制备用附件以页面实际资产为准。
 
 **从根目录 `Start-App.cmd` 启动**，也可以双击根目录 `Update-Guantuiguang.exe`。不要只复制 EXE 或直接运行 `app/自动关推广.exe`，后者会跳过启动前更新检查。完整包已包含 Python，真实浏览器登录仍需要 Google Chrome。
 

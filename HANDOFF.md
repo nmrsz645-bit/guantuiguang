@@ -2,6 +2,8 @@
 
 当前功能版本 **1.3.0**。代码仓库 `https://github.com/nmrsz645-bit/guantuiguang.git`，正式开发分支 main；提交/Release 状态以远端实时结果为准。发布命令与对象合同只维护在 [docs/RELEASE-GUIDE.md](docs/RELEASE-GUIDE.md)，用户使用见 [README](README.md)，不可误动数据规则见 [AGENTS](AGENTS.md)。
 
+2026-11-19 已完成网站上架和产品更新清单发布，包来自 `16a3bb6ef1fc70ffb17150f13c5d4f11c4465f8f`，38 项离线测试与真实 EXE 隔离升级/回退通过；详见 [本次验收](docs/validation/2026-11-19-v1.3.0.md)。GitHub Release 暂无二进制附件（上传网络超时），正式下载走已回下载验哈希的国内包。
+
 ## 另一台 Codex 先做什么
 
 1. 取得完整 main 源码；已有目录先检查 `git status --short`、暂存区、分支、HEAD 和远端，不覆盖原件。
