@@ -10,6 +10,7 @@ import stat
 import subprocess
 import sys
 import time
+import traceback
 import urllib.parse
 import urllib.request
 import uuid
@@ -321,6 +322,7 @@ def check_and_update(root, choice="prompt", manifest_url=MANIFEST_URL, test_mode
             recover_transaction(root)
             read_version(root / "app")
             log(root, f"Update failed; retained usable app: {type(error).__name__}: {error}")
+            log(root, traceback.format_exc())
             return "fallback"
 
 
