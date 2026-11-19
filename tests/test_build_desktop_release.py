@@ -19,6 +19,17 @@ def load_builder_module():
 
 
 class BuildDesktopReleaseTests(unittest.TestCase):
+    def test_runtime_certificate_resource_is_bundled_when_required(self):
+        builder = load_builder_module()
+        with tempfile.TemporaryDirectory() as temp:
+            library = Path(temp)
+            certificate = library / "codex-rejected-cas.pem"
+            certificate.write_text("test certificate fixture", encoding="ascii")
+            args = builder.runtime_data_args(library)
+            self.assertIn("--add-data", args)
+            self.assertTrue(any(str(certificate) in arg for arg in args))
+            self.assertEqual(builder.runtime_data_args(library / "missing"), [])
+
     def test_release_archive_contains_manifest_and_preserves_release_folder(self):
         builder = load_builder_module()
         with tempfile.TemporaryDirectory() as temp:

@@ -396,6 +396,7 @@ def main():
             return 2
         for name in ("requests", "websocket", "dotenv", "tkinter"):
             importlib.import_module(name)
+        importlib.import_module("ssl").create_default_context()
         tk.Tcl()
         args.report.write_text(json.dumps({"productId": "guantuiguang", "version": APP_VERSION, "ok": True}), encoding="utf-8")
         return 0

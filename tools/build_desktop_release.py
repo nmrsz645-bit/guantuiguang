@@ -2,10 +2,12 @@
 
 import hashlib
 import json
+import os
 import re
 import shutil
 import subprocess
 import sys
+import ssl
 import zipfile
 from pathlib import Path
 
@@ -44,6 +46,13 @@ def app_version():
 def run(args):
     print("RUN:", subprocess.list2cmdline([str(item) for item in args]))
     subprocess.run(args, cwd=ROOT, check=True)
+
+
+def runtime_data_args(library=None):
+    """Preserve the build runtime's certificate policy in frozen executables."""
+    library = Path(library) if library is not None else Path(ssl.__file__).parent
+    certificate = library / "codex-rejected-cas.pem"
+    return ["--add-data", f"{certificate}{os.pathsep}."] if certificate.is_file() else []
 
 
 def sha256_file(path):
@@ -96,13 +105,14 @@ def main():
     ]
     for module in HIDDEN_IMPORTS:
         command.extend(["--hidden-import", module])
+    command.extend(runtime_data_args())
     command.append(str(ENTRY))
     run(command)
 
     run([
         sys.executable, "-m", "PyInstaller", "--noconfirm", "--clean", "--windowed", "--onefile",
         "--name", "Update-Guantuiguang", "--distpath", str(DIST_DIR), "--workpath", str(BUILD_DIR),
-        "--specpath", str(BUILD_DIR), str(ROOT / "tools" / "update_client.py"),
+        "--specpath", str(BUILD_DIR), *runtime_data_args(), str(ROOT / "tools" / "update_client.py"),
     ])
 
     executable = DIST_DIR / f"{APP_NAME}.exe"
