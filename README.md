@@ -1,102 +1,70 @@
-# 自动关推广
+# 自动关推广 v1.3.0
 
-Windows 本地桌面程序。它根据本机配置读取巨量引擎投放账户中的单元状态；仅当单元满足二维码预览条件时，才会尝试关闭该单元的投放开关。它不会删除单元，也不会关闭项目。
+Windows 本地桌面程序：检测巨量引擎投放账户当天的单元，满足二维码预览条件后，按用户允许的范围关闭对应单元开关；不删除单元、不关闭项目。当前不提供账户余额查询。
 
-当前正式源码版本为 **1.2.1**。完整的维护交接信息请先读 [HANDOFF.md](HANDOFF.md)，新 Windows 电脑接手、完整包更新及下载站边界见 [docs/RELEASE-GUIDE.md](docs/RELEASE-GUIDE.md)，协作与敏感数据规则见 [AGENTS.md](AGENTS.md)。
+v1.3.0 新增网站下载与**启动前由用户选择更新**。业务监控和账户授权逻辑不变。维护者先读 [HANDOFF](HANDOFF.md)、[发布指南](docs/RELEASE-GUIDE.md) 和 [AGENTS](AGENTS.md)。
 
-交给另一台电脑的 Codex：克隆本仓库 `main`，从 HANDOFF 的“另一台电脑的 Codex 从这里开始”执行。程序源码、测试和构建脚本在 Git；可运行完整包在 [GitHub Release](https://github.com/nmrsz645-bit/guantuiguang/releases/tag/v1.2.1)。后续源码推送、新版 ZIP 构建/上传、下载核验、手工更新与回滚的命令均在发布指南中。
+## 下载与第一次启动
 
-> 安全边界：本仓库和 Release 不含账户 ID、App Secret、Token、Cookie、浏览器登录资料、真实配置、日志或运行状态。程序只有在本机账户已启用、授权完成，并且配置允许关闭时才可能改变投放状态。首次验证请保持只检测模式，或不要启动监控。
+在 [下载站](https://download.luotuoqiluotuozhaoma.com/) 找到“自动关推广”，下载完整 Windows ZIP 并解压。也可从 [GitHub Releases](https://github.com/nmrsz645-bit/guantuiguang/releases) 取得同一完整包。
 
-## 普通用户：从 Release 安装
+**从根目录 `Start-App.cmd` 启动**，也可以双击根目录 `Update-Guantuiguang.exe`。不要只复制 EXE 或直接运行 `app/自动关推广.exe`，后者会跳过启动前更新检查。完整包已包含 Python，真实浏览器登录仍需要 Google Chrome。
 
-1. 在 GitHub Release 下载完整的 `guantuiguang-v1.2.1.zip` 资产，解压整个文件夹。不要只复制 `自动关推广.exe`。
-2. 确认 Windows 已安装 Google Chrome。EXE 自带 Python 运行时，不需要单独安装 Python。
-3. 双击 `自动关推广.exe`，在“账户配置”中填写自己拥有并获授权的投放账户 ID、App ID、App Secret 和授权回调地址后保存。
-4. 使用“打开巨量登录”在每个主账户的专用 Chrome 窗口完成登录；再使用“写入授权码”或从本机 `账号接口信息` 导入授权。
-5. 运行“一键自检”，仅在 EXE 显示“自检通过，可以启动监控。”后，才考虑启动监控。源码 BAT 自检才使用 `Errors: 0` 的输出；两者都不会验证真实 Token 或替代账户验收。
+安装目录结构：
 
-首次运行会在 EXE 同级的 `data` 文件夹保存本机配置、Token、Chrome profile、日志和运行状态。升级时保留整个旧 `data` 文件夹；不要将它提交到 Git、上传公开链接或与其他电脑混用。
-
-## 开发者：从源码运行
-
-### 环境
-
-- Windows 10/11
-- Git
-- Python 3.12 或 3.13；本项目已验证 Python 3.13.15，以下开发/构建命令固定使用 `py -3.13`
-- 网络用于安装 Python 依赖；Chrome 仅在实际登录或监控时需要
-
-在仓库根目录执行：
-
-```powershell
-py -3.13 -m pip install -r requirements.txt
-py -3.13 -m unittest discover -s tests -v
-py -3.13 -m compileall -q .
+```text
+Start-App.cmd                 日常入口
+Update-Guantuiguang.exe        检查更新、提示用户、校验与回退
+app/自动关推广.exe            桌面程序
+app/version.json              产品、版本、布局合同
+data/                         本机配置、Token、Chrome 登录态与运行资料
+app.previous/                 更新时保留的上一版程序
 ```
 
-这些测试只覆盖离线规则：不会访问巨量接口、不会启动 Chrome、不会读取本机账户文件，也不会关闭推广。
+`data` 在本机使用时创建，发布包不包含它。解压后的顶层文件夹为 `自动关推广-v1.3.0`。v1.2.1 没有更新入口，必须首次手动取得 v1.3.0 完整包；旧版不会凭空自动升级。在同一台电脑保留已有 data 前先停止旧程序并备份，不能从其他电脑复制 Token 或浏览器资料。
 
-首次在源码目录配置本机环境时，可运行 `首次安装.bat`。它会在 `自动关推广\config.json` 不存在时由 `config.example.json` 创建初始模板；已有配置不会被覆盖。该流程可能通过 `winget` 安装 Python 或通过 pip 下载依赖，因此不应在没有网络/安装权限的环境中假定它能成功。
+## 更新如何工作
 
-### 常用入口
+从日常入口启动后检查关推广专属 HTTPS 清单。发现更高版本提示“现在更新吗”：选择是才下载，选择否继续当前版本。下载后检查产品/版本、SHA-256、安全 ZIP 布局和新程序隔离自检，随后只替换 `app`。
 
-| 入口 | 用途 | 是否会触发实际监控 |
-| --- | --- | --- |
-| `自动关推广本地程序.bat` / `自动关推广.exe` | 打开本地管理界面和账户配置 | 否 |
-| `打开巨量登录.bat` | 为已启用主账户启动专用 Chrome 登录窗口 | 否，但会打开浏览器 |
-| `写入巨量授权码.bat` | 粘贴 OAuth 回调链接/授权码 | 否 |
-| `自动导入巨量账号授权.bat` | 从本机账号文本目录导入授权 | 否 |
-| `一键自检.bat` | 校验依赖、配置、端口和目录 | 否 |
-| `启动监控.bat` | 启动守护进程与检测循环 | **是** |
-| `停止监控.bat` | 发送停止信号并结束本程序启动的监控 | 会停止本程序子进程 |
-| `一键状态面板.bat` | 读取锁、日志和最近状态 | 否 |
+- 断网、哈希错误、损坏包、自检或替换失败时保留/恢复可用旧版；同版或更低版不替换。
+- 有此安装的程序进程运行时不进行更新。先正常停止监控并关闭窗口，再从日常入口启动。
+- 配置、授权、Chrome profile、日志与状态位于根目录 `data`，更新不操作它。
+- 上一版 `app.previous` 和更早的 `.update-history` 会保留；测试/下载临时目录也保留以便排查，会占用额外磁盘空间，未经许可不要自动清理。
+- 根启动器和更新器不自动替换；将来若它们需要修复，应重新取得完整包。
 
-源码 GUI 的标准入口是 `自动关推广本地程序.bat`。需要固定解释器时，使用 `py -3.13 .\tools\local_oceanengine_app.py`；不要把 `启动监控.bat` 当作 GUI 启动命令。
+## 配置与实际操作
 
-## 配置与安全
+1. 打开界面“账户配置”，填写本人获授权的投放账户 ID、App ID、App Secret 和回调地址。应用配置来自用户有权限的巨量应用管理页面。
+2. “打开巨量登录”，在各账户专用 Chrome 登录；再“写入授权码”或“导入账户授权”。OAuth code/Token 均在本机取得。
+3. “一键自检”通过后，只有用户明确允许才“启动监控”；“停止监控”停止本程序及专用浏览器。关闭管理窗口也会停止相关进程。
 
-模板文件是 `config.example.json`；实际文件必须是本机未跟踪的 `自动关推广\config.json`。每个主账户需要独立且有效的：
+模板 `config.example.json` 默认账户 `enabled: false`，但 `dry_run: false`、`allow_close: true`；启用账户后不能认定是只检测。有账户的只检测需在本机配置设 `dry_run: true` 或取消“允许自动关闭推广”。`--no-close` 只属于监控 Python 脚本，不能传给 EXE 当作保护开关；只检测仍会访问平台。
 
-- 投放账户 ID；
-- 巨量应用的 App ID、App Secret 和已登记的回调地址；
-- 专用 Chrome 调试端口和 profile 目录；
-- 本机 Token 文件路径。
+EXE 配置为安装根 `data/config.json`；源码模式为 `自动关推广/config.json`。不要混淆数据根或覆盖现有配置。真实配置、Secret、Token、Cookie、浏览器 profile、账号文本、日志及运行资料不得进入 Git/Release。
 
-请只从本人有权限的巨量引擎/应用管理页面获取这些值。不要猜测、生成或在 Issue、Commit、Release 说明、截图或日志中粘贴任何 Secret/Token。模板中主账户默认 `enabled: false`，用于阻止未配置时运行；启用账户前先检查账户 ID 和端口均不重复。
+## 排错与验证边界
 
-模板默认账户禁用，但 `dry_run` 为 false 且 `allow_close` 为 true；启用账户后不能假定是只检测。在本机配置设 `dry_run: true` 或取消“允许自动关闭推广”可用于有账户的只检测；`--no-close` 仅适用于监控 Python 脚本，不能传给 EXE 当作关闭保护。只检测仍会访问平台，需要用户授权；离线验收只运行 tests。
-
-## 常见问题
-
-| 现象 | 先检查什么 |
+| 情况 | 操作 |
 | --- | --- |
-| 找不到 Python | 重新运行 `首次安装.bat`，或安装 Python 3.12/3.13 并确保 `py -3` 可用；源码克隆不含离线 Python 安装器。 |
-| `Chrome not found` | 安装 Google Chrome 后重新运行自检。 |
-| 自检不是 `Errors: 0` | 逐项修复缺失依赖、未启用/不完整账户、重复投放账户 ID 或重复调试端口；不要通过伪造 Token 绕过检查。 |
-| 提示需要重新授权或 Token 失效 | 重新打开对应主账户的专用 Chrome，再通过授权入口写入本机授权；不要复制其他电脑的 Token。 |
-| 监控已在运行/无法停止 | 先用 `停止监控.bat`，再检查 `自动关推广\data` 的锁与 `自动关推广\rizhi` 日志；不要直接删除 data、Token 或 profile。 |
-| 升级后找不到历史状态 | 新版 EXE 必须与原 `data` 文件夹一起使用；先备份该文件夹，再替换程序文件。 |
+| 没有更新提示 | 从 Start-App.cmd 启动；同版本无提示，断网继续旧版。查看根 logs/Update-App.log。 |
+| 更新入口无启动结果 | 查看 logs/Update-App.log；锁/已有进程为退出码 5，缺少安全可用程序为 6。不要直接删锁或 app.previous。 |
+| Chrome 未找到 | 安装 Chrome 后重跑一键自检。 |
+| 授权失效 | 在对应专用 Chrome 重新登录/授权，不能复制他人 Token。 |
+| 配置自检 | EXE 成功显示“自检通过，可以启动监控。”；源码 BAT 输出 Errors: 0。配置自检不验证真实 Token。 |
 
-日志位于 `rizhi` 或 `自动关推广\rizhi`；程序的临时日志保留策略为 72 小时。排错时请保留原始日志和配置的脱敏副本，不要上传真实授权资料。
+隔离 `--release-check --report <新文件>` 检查版本、依赖和 Tcl，不读账户或启动监控；普通 `--self-check` 会检查本机配置，空配置时失败是预期结果。生产监控、真实登录/接口和实际关闭推广均需用户专门指定账户验收；离线测试和更新验证不代表业务验收。
 
-## 构建与发布
+## 开发
 
-在隔离、干净的源码副本中构建：
+本轮构建验证环境为 Windows x64、Python 3.12.14、PyInstaller 6.22.3，依赖放在项目 `.venv`；无需 Node/npm 或 .NET SDK。源码 GUI 是 `tools/local_oceanengine_app.py`，桌面打包入口是 `tools/desktop_oceanengine_app.py`。
 
 ```powershell
-py -3.13 -m pip install -r requirements.txt
-py -3.13 -m pip install "pyinstaller==6.22.2"
-py -3.13 -m unittest discover -s tests -v
-py -3.13 -m compileall -q .
-py -3.13 .\tools\build_desktop_release.py
+py -3.12 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt -r requirements-build.txt
+.\.venv\Scripts\python.exe -m unittest discover -s tests -v
+.\.venv\Scripts\python.exe -m compileall -q tools tests 自动关推广
+.\.venv\Scripts\python.exe tools\local_oceanengine_app.py
 ```
 
-`build-desktop-release.bat` 也是标准入口，但它通过 `tools/run_py.bat` 调用泛化的 `py -3`；为固定到已验证的 Python 3.13.15，使用上面的直接脚本命令。构建会生成：
-
-- `release\自动关推广-v<版本>\`：EXE、配置模板、README、HANDOFF、使用说明和 `SHA256SUMS.txt`；
-- `release\自动关推广-v<版本>.zip`：上述文件夹的可上传 Release 附件。
-
-构建拒绝覆盖同版本的文件夹或 ZIP。发布新版本应先修改并审查应用版本、在全新副本构建和测试、检查 ZIP 内容不含私有数据，再创建新的 Git tag/Release；绝不重写旧 tag、覆盖旧附件或用用户 `data` 文件夹打包。
-
-实际上传命令见 [推送源码](docs/RELEASE-GUIDE.md#source-update)、[构建完整包](docs/RELEASE-GUIDE.md#build) 和 [上传 Release](docs/RELEASE-GUIDE.md#github-release)。当前没有自动更新或本项目下载站卡片：Git push 只保存源码，发布 Release 只增加手动下载入口，已安装用户需停止程序、保留本机 data 后手工更新。
+源码 GUI 部分按钮经 BAT 使用系统 `py -3`，不自动选 `.venv`。纯代码检查不要启动监控或读取真实账户。构建、上传 ZIP、启用客户端清单和网站卡片分别执行，详见 [发布指南](docs/RELEASE-GUIDE.md)。

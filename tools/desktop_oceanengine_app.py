@@ -23,9 +23,10 @@ from config_validation import enabled_main_accounts, validate_monitor_config
 
 
 CREATE_NO_WINDOW = 0x08000000
-APP_VERSION = "1.2.1"
+APP_VERSION = "1.3.0"
 IS_FROZEN = bool(getattr(sys, "frozen", False))
-APP_DIR = Path(sys.executable).resolve().parent if IS_FROZEN else Path(__file__).resolve().parents[1]
+EXE_DIR = Path(sys.executable).resolve().parent
+APP_DIR = (EXE_DIR.parent if EXE_DIR.name.lower() == "app" else EXE_DIR) if IS_FROZEN else Path(__file__).resolve().parents[1]
 SOURCE_AD_DIR = Path(__file__).resolve().parents[1] / "自动关推广"
 # A desktop release must be isolated from older installations.  Old BAT files
 # may have left OCEANENGINE_ROOT in the user's environment, so do not inherit it.
@@ -386,7 +387,29 @@ def main():
     parser.add_argument("--supervisor-service", action="store_true")
     parser.add_argument("--auth-service", action="store_true")
     parser.add_argument("--self-check", action="store_true")
+    parser.add_argument("--release-check", action="store_true")
+    parser.add_argument("--ui-smoke-test", action="store_true")
+    parser.add_argument("--report", type=Path)
     args, _ = parser.parse_known_args()
+    if args.release_check:
+        if args.report is None:
+            return 2
+        for name in ("requests", "websocket", "dotenv", "tkinter"):
+            importlib.import_module(name)
+        tk.Tcl()
+        args.report.write_text(json.dumps({"productId": "guantuiguang", "version": APP_VERSION, "ok": True}), encoding="utf-8")
+        return 0
+    if args.ui_smoke_test:
+        if args.report is None:
+            return 2
+        # Construct the interface without starting workers or executing its close handler.
+        root = tk.Tk()
+        DesktopApp(root)
+        root.update_idletasks()
+        args.report.write_text(json.dumps({"version": APP_VERSION, "title": root.title(), "worker_started": False}), encoding="utf-8")
+        root.after(500, root.destroy)
+        root.mainloop()
+        return 0
     if args.monitor_service:
         return monitor_service()
     if args.supervisor_service:

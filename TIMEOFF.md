@@ -10,8 +10,8 @@
    ```powershell
    git status --short
    git rev-parse HEAD
-   git ls-remote origin refs/heads/main 'refs/tags/v1.2.1^{}'
-   py -3.13 -m unittest discover -s tests -v
+   git ls-remote origin refs/heads/main
+   .\.venv\Scripts\python.exe -m unittest discover -s tests -v
    ```
 
 3. 本地与远程提交一致、测试通过且工作区状态已核实后，才按 README 配置或按 HANDOFF 构建/发布。

@@ -21,6 +21,9 @@ rizhi/
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.venv/
+.release-tools/
+.release-stage/
 
 # Local installers and generated release/build artifacts are distributed separately.
 installers/
